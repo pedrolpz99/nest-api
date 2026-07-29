@@ -1,20 +1,9 @@
-#ligth image node
+# Dockerfile (dev)
 FROM node:20-alpine
-
 WORKDIR /usr/src/app
-
-#copy dependecy files
+RUN apk add --no-cache libc6-compat
 COPY package*.json ./
-
-#install dependecies
-
-RUN npm i
-
+RUN npm ci
 COPY . .
-
-#Expose port Nestjs
 EXPOSE 3000
-
-CMD ["npm","run","start:dev"]
-
-
+CMD ["npm", "run", "start:dev"]
