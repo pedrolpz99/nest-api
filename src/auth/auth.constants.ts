@@ -3,7 +3,8 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 export const jwtConstants = {
-  secret: process.env.JWT_SECRET,
+  accessTokenSecret: process.env.JWT_ACCESS_SECRET,
+  refreshTokenSecret: process.env.JWT_REFRESH_SECRET,
 };
 
 export const IS_PUBLIC_KEY = 'isPublic';

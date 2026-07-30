@@ -20,6 +20,9 @@ export class User {
   @Column({ type: 'varchar' })
   password!: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  hashedRefreshToken!: string | null;
+
   @Column({ type: 'enum', enum: ['m', 'f', 'u'] })
   /**
    * m - male

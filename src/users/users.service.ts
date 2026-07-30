@@ -48,4 +48,11 @@ export class UsersService {
   remove(id: number) {
     return this.userRepository.delete(id);
   }
+
+  async updateHashedRefreshToken(
+    userId: number,
+    hashedRefreshToken: string | null,
+  ) {
+    return this.userRepository.update(userId, { hashedRefreshToken });
+  }
 }
