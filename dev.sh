@@ -6,8 +6,13 @@ set +a
 
 COMPOSE="docker compose"
 
+
 if [ "$1" == "up" ]; then
-  $COMPOSE build && $COMPOSE up -d && $COMPOSE logs -f
+    $COMPOSE up -d
+    $COMPOSE logs -f
+elif [ "$1" == "rebuild" ]; then
+    $COMPOSE build api --no-cache
+    $COMPOSE up -d
 elif [ "$1" == "sh" ]; then
   $COMPOSE exec api sh
 elif [ "$1" == "install" ]; then
