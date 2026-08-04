@@ -11,11 +11,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(
-    username: string,
-    pass: string,
-  ): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOneByUsername(username);
+  async signIn(email: string, pass: string): Promise<{ access_token: string }> {
+    const user = await this.usersService.findOneByEmail(email);
     if (!user) throw new UnauthorizedException();
 
     const isMatch = await bcrypt.compare(pass, user.password);
@@ -38,14 +35,13 @@ export class AuthService {
     if (!user || !user.hashedRefreshToken) throw new UnauthorizedException();
 
     const isMatch = await bcrypt.compare(refreshToken, user.hashedRefreshToken);
-    if (!isMatch) throw new UnauthorizedException();
+    if (!isMatch) {
+      // token reusado o robado: token válido por firma pero no coincide con el vigente
+      await this.usersService.updateHashedRefreshToken(payload.sub, null);
+      throw new UnauthorizedException();
+    }
 
-    const access_token = await this.jwtService.signAsync(
-      { sub: user.id, username: user.username },
-      { secret: jwtConstants.accessTokenSecret, expiresIn: '15m' },
-    );
-
-    return { access_token };
+    return this.getTokensAndUpdateUser(user.id, user.username);
   }
 
   async logout(userId: number) {

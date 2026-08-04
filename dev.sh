@@ -5,7 +5,8 @@ set -a
 set +a
 
 COMPOSE="docker compose"
-
+DB_USER="postgres"
+DB_NAME="nest_db"
 
 if [ "$1" == "up" ]; then
     $COMPOSE up -d
@@ -41,6 +42,9 @@ elif [ "$1" == "migration:revert" ]; then
   $COMPOSE exec api npm run migration:revert
 elif [ "$1" == "migration:show" ]; then
   $COMPOSE exec api npm run migration:show
+elif [ "$1" == "db:reset" ]; then
+  $COMPOSE exec db psql -U "$DB_USER" -d "$DB_NAME" -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+  $COMPOSE exec api npm run migration:run
 else
   echo "Uso: ./dev.sh [up|sh|install <paquete>|npm <comando>|nest <comando>|logs|down|stop|build|migration:generate <nombre>|migration:run|migration:revert|migration:show|db:reset]"
 fi
